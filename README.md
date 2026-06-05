@@ -1,1 +1,14 @@
-# -Codveda-Technologies
+# Codveda-Technologies
+
+### During my internship at Codveda Technologies, I developed and analyzed several machine learning pipelines focusing on classification, regression, and unsupervised learning.
+
+
+* **[Iris Species Classification](./src/iris_pipeline.py)**: Conducted a comparative analysis of supervised learning algorithms to classify botanical species. The pipeline included Label Encoding and StandardScaler for data normalization. I implemented and evaluated Logistic Regression, K-Nearest Neighbors (KNN), Decision Trees, and Random Forests using Accuracy, Macro F1-Score, and detailed Classification Reports. Model selection was driven by k-value optimization, Decision Tree visualization, and a final comparison of F1-scores across all implemented algorithms.
+
+* **[Real Estate Price Prediction](./src/house_pipeline.py)**: Developed a regression framework to estimate house prices. Preprocessing involved feature alignment, target variable renaming, and StandardScaler normalization. I compared Linear Regression, Decision Tree, Random Forest, KNeighbors, and Support Vector Regressors (SVR). Performance was measured via MAE, RMSE, and R2 Score. Analysis of feature importance revealed that feat_12 was the primary driver for Linear Regression, while feat_5 dominated the Random Forest model, and a final comparison of R2-scores across all implemented algorithms
+
+* **[Financial Asset Behavioral Clustering](./src/stock_price_pipline.py)**: Performed unsupervised learning on stock market data to identify behavioral patterns among symbols. I engineered several financial features: Average Return, Volatility (std of pct_change), Average Volume, Average Daily Range, and Total Growth. To ensure model robustness, I applied the Clipping method to mitigate the impact of outliers. Using K-Means clustering and the Elbow method, I determined the optimal number of clusters. The results were validated using the Silhouette Score and visualized in 2D space via Principal Component Analysis (PCA).
+
+* **[Sentiment Analysis & Recommendation System](./src/sentiment_pipline.py)**: Developed an NLP pipeline to analyze and categorize text sentiment into three classes: **Positive, Negative, and Neutral**. The preprocessing stage included text cleaning and semantic enrichment through hashtag integration. I utilized **TF-IDF Vectorization** for feature extraction and evaluated several models, including **Logistic Regression, Random Forest, SVC, and KNeighbors Classifier**, using **Accuracy, F1-Score, and Classification Reports**. Analysis revealed that the models' predictive performance was constrained by dataset size (data scarcity). To overcome this, I implemented a **Content-Based Recommendation System** using **Cosine Similarity** on the vectorized text, which successfully identified highly similar documents.
+
+
