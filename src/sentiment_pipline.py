@@ -1,4 +1,4 @@
-%%writefile sentiment_pipline.py
+%%writefile sentiment_pipeline.py
 import re
 import nltk
 import numpy as np
@@ -72,6 +72,7 @@ def map_sentiment(val: str) -> int:
     else:
         return 2            #neutral
 
+
 def preprocessing_sentiment(df: pd.DataFrame) -> tuple:
     print("*** Preprocessing Sentiment dataset.csv ***")
     df = df.copy()
@@ -89,6 +90,15 @@ def preprocessing_sentiment(df: pd.DataFrame) -> tuple:
     df['final_text'] = df['cleaned_text'] + ' ' + df['Hashtags']
     df['final_text'] = df['final_text'].apply(lambda x: ' '.join(x.split()))
     return df
+
+def evaluate_model(y_pred, y_test):
+    acc = accuracy_score(y_test, y_pred)
+    F1_score = f1_score(y_test, y_pred, average='macro')
+    report = classification_report(y_test, y_pred)
+    
+    print(f"Accuracy: {acc:.4f}")
+    print(f"F1-Score: {F1_score}")
+    print("\nClassification Report:\n", report)
 
 df = pd.read_csv("/kaggle/input/datasets/elihaciyev/ml-intern/Sentiment dataset.csv")
 df = preprocessing_sentiment(df)
@@ -109,10 +119,7 @@ model = LogisticRegression(
 )
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-
-print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
-print(f"F1-Score: {f1_score(y_test, y_pred, average='macro')}")
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
+evaluate_model(y_pred, y_test)
 
 
 print("\n", 30*"#", "Random Forest Classifier", "#"*30, "\n")
@@ -124,10 +131,7 @@ model = RandomForestClassifier(
 )
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-
-print(f'Accuracy: {accuracy_score(y_test, y_pred):.4f}')
-print(f"F1-Score: {f1_score(y_test, y_pred, average='macro')}")
-print('\nClassification Report:\n', classification_report(y_test, y_pred))
+evaluate_model(y_pred, y_test)
 
 
 print("\n", 30*"#", "Support Vector Classifier", "#"*30, "\n")
@@ -136,20 +140,14 @@ model = SVC(
 )
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-
-print(f'Accuracy: {accuracy_score(y_test, y_pred):.4f}')
-print(f"F1-Score: {f1_score(y_test, y_pred, average='macro')}")
-print('\nClassification Report:\n', classification_report(y_test, y_pred))
+evaluate_model(y_pred, y_test)
 
 
 print("\n", 30*"#", "KNeighbors Classifier", "#"*30, "\n")
 model = KNeighborsClassifier(n_neighbors=3)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-
-print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
-print(f"F1-Score: {f1_score(y_test, y_pred, average='macro')}")
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
+evaluate_model(y_pred, y_test)
 
 f1_scores = []
 k_range = range(1, 20) 
@@ -171,6 +169,7 @@ plt.show()
 
 
 print('\n', 30*"#", 'Recommendations System', "#"*30, '\n')
+tfidf = TfidfVectorizer(min_df=3, ngram_range=(1, 2), binary=True)
 X_all = tfidf.fit_transform(df['final_text'])
 cosine_sim = cosine_similarity(X_all, X_all)
 
@@ -184,6 +183,7 @@ def get_recommendations(post_index: int,
     
     top_indices = [i[0] for i in sim_scores[1:top_n + 1]]
     return df_texts.iloc[top_indices]
+
 
 text_column = df['Text']
 post_idx = 20
