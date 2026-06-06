@@ -1,4 +1,4 @@
-%%writefile house_pipline.py
+%%writefile house_modelling.py
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -37,6 +37,16 @@ def preprocessing_house(df: pd.DataFrame) -> tuple:
     X_test = scaler.transform(X_test)
     return X_train, X_test, y_train, y_test, features
 
+def evaluate_regressor(y_pred, X_test, y_test):
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    print(f"MAE (Mean Absolute Error): {mae:.2f}")
+    print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
+    print(f"R² (Coefficient of Determination): {r2:.4f}")
+    return r2
+
 house_df = pd.read_csv("/kaggle/input/datasets/elihaciyev/ml-intern/house Prediction Data Set.csv", sep=r'\s+', header=None)
 X_train, X_test, y_train, y_test, features = preprocessing_house(house_df)
 all_r2_scores = []
@@ -44,16 +54,10 @@ all_r2_scores = []
 print('\n', 30*"#", "Linear Regression", "#"*30, "\n")
 model = LinearRegression()
 model.fit(X_train, y_train)
+
 y_pred = model.predict(X_test)
-
-mae = mean_absolute_error(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-r2 = r2_score(y_test, y_pred)
+r2 = evaluate_regressor(y_pred, X_test, y_test)
 all_r2_scores.append(r2)
-
-print(f"MAE (Mean Absolute Error): {mae:.2f}")
-print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
-print(f"R² (Coefficient of Determination): {r2:.4f}")
 
 coeff_df = pd.DataFrame({
     "Features": features,
@@ -73,15 +77,9 @@ model = DecisionTreeRegressor(
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-mae = mean_absolute_error(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-r2 = r2_score(y_test, y_pred)
+r2 = evaluate_regressor(y_pred, X_test, y_test)
 all_r2_scores.append(r2)
 
-
-print(f"MAE (Mean Absolute Error): {mae:.2f}")
-print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
-print(f"R² (Coefficient of Determination): {r2:.4f}")
 
 print("\n", 30*"#", "Random Forest Regressor", "#"*30, "\n")
 model = RandomForestRegressor(
@@ -90,15 +88,8 @@ model = RandomForestRegressor(
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-mae = mean_absolute_error(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-r2 = r2_score(y_test, y_pred)
+r2 = evaluate_regressor(y_pred, X_test, y_test)
 all_r2_scores.append(r2)
-
-
-print(f"MAE (Mean Absolute Error): {mae:.2f}")
-print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
-print(f"R² (Coefficient of Determination): {r2:.4f}")
 
 importances = model.feature_importances_
 features_names = features
@@ -120,15 +111,8 @@ model = KNeighborsRegressor(n_neighbors=2)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-mae = mean_absolute_error(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-r2 = r2_score(y_test, y_pred)
+r2 = evaluate_regressor(y_pred, X_test, y_test)
 all_r2_scores.append(r2)
-
-
-print(f"MAE (Mean Absolute Error): {mae:.2f}")
-print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
-print(f"R² (Coefficient of Determination): {r2:.4f}")
 
 r2_scores = []
 k_range = range(1, 20)
@@ -143,7 +127,7 @@ plt.figure(figsize=(8, 6))
 plt.plot(k_range, r2_scores, marker='o', color='g', linestyle='--')
 plt.title("Finding optimal k for KNN Regression")
 plt.xlabel('Value of k')
-plt.ylabel('R2-Score)')
+plt.ylabel('RMSE (Error)')
 plt.xticks(k_range)
 plt.grid()
 plt.show()
@@ -153,14 +137,8 @@ svr = SVR(kernel='rbf', C=100.0, epsilon=0.1)
 svr.fit(X_train, y_train)
 y_pred = svr.predict(X_test)
 
-mae = mean_absolute_error(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-r2 = r2_score(y_test, y_pred)
+r2 = evaluate_regressor(y_pred, X_test, y_test)
 all_r2_scores.append(r2)
-
-print(f"MAE (Mean Absolute Error): {mae:.2f}")
-print(f"RMSE (Root Mean Squared Error): {rmse:.2f}")
-print(f"R² (Coefficient of Determination): {r2:.4f}")
 
 models = ["LR", 'DTR', 'RFR', 'KNNR', "SVR"]
 
