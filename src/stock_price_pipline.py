@@ -8,7 +8,6 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 def preprocessing_clustering(df):
-    
     df.sort_values(['symbol', 'date'], inplace=True)
     df.dropna(inplace=True)
     df['returns'] = df.groupby('symbol')['close'].pct_change()
@@ -26,6 +25,7 @@ def preprocessing_clustering(df):
         'avg_volume', 'avg_daily_range', 
         'total_growth'
     ]
+    
     for col in stock_profiles.columns:
         lower = stock_profiles[col].quantile(0.01)
         upper = stock_profiles[col].quantile(0.99)
@@ -39,15 +39,16 @@ def preprocessing_clustering(df):
 
 
 df = pd.read_csv("/kaggle/input/datasets/elihaciyev/ml-intern/Stock Prices Data Set.csv")
+display(df.head())
 df_cluster = preprocessing_clustering(df)
 
 print("\n", 30*"#", "KMeans Clustering", "#"*30, "\n")
 optimal_k = 4
 kmeans = KMeans(n_clusters=optimal_k, random_state=42, n_init=10)
 clusters = kmeans.fit_predict(df_cluster)
+score = silhouette_score(df_cluster, clusters)
 df_cluster['cluster'] = clusters
 
-score = silhouette_score(df_cluster, clusters)
 print(f"Silhouette Score for {optimal_k} clustering: {score:.4f}\n")
 
 inertia = []
